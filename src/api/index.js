@@ -1,25 +1,11 @@
 import {useEffect, useState} from 'react';
 import { useLocation } from 'react-router-dom';
 
-export const GetRecipes = () => {
+
+export const useFilterRecipes = (keywords) => {
 
     const [recipes, setRecipes] = useState([]);
 
-    useEffect(() => {
-
-            fetch('http://localhost:8000/recipes', {
-            method: 'GET'
-            }).then(response => response.json()).then(response => {
-                setRecipes(response);
-            })
-       
-    }, [])
-    return recipes;
-}
-export const GetFilterRecipes = (keywords) => {
-
-    const [recipes, setRecipes] = useState([]);
-       
     useEffect(() => {
 
             fetch('http://localhost:8000/recipes?keywords='+keywords, {
@@ -28,7 +14,8 @@ export const GetFilterRecipes = (keywords) => {
                 setRecipes(response);
             })
        
-    }, [])
+    }, [keywords])
+ 
     return recipes;
 }
 

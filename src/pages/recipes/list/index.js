@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {Link, useHistory, useLocation} from 'react-router-dom';
-import { GetRecipes, deleteRecipe, GetFilterRecipes } from '../../../api';
+import { deleteRecipe, useFilterRecipes } from '../../../api';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {faTrashAlt} from '@fortawesome/free-solid-svg-icons'
 
@@ -37,9 +37,7 @@ const parseQuery = (queryString) => {
 
 export default function RecipesList () {
     
-  
-    let recipes = GetRecipes();
-       
+         
     const history = useHistory();
     const location = useLocation();
     
@@ -47,12 +45,11 @@ export default function RecipesList () {
     var index = location.search.indexOf("=");
     var query = location.search.substring(index+1, location.search.length);
     let values = query.split(",");
-    let finalquery = JSON.stringify(values);
+   
+
+    const recipes = useFilterRecipes(query);
+
     
-    console.log(query);
-    const newRecipes = GetFilterRecipes(query);
-    console.log(newRecipes);
-           
   
     const searchBarKeyword = e => {
         if(e.key === 'Enter'){
@@ -70,8 +67,12 @@ export default function RecipesList () {
         if(e.key === 'Enter'){
             const search = e.target.value;
             const url = '/recipes?title='+search;
-            return history.push(url);
-            
+            if(search === ""){
+                return history.push('/recipes');
+            }
+            return history.push(url);   
+          
+                        
         }
         
     }
@@ -93,7 +94,7 @@ export default function RecipesList () {
                 </Link>
             </div>
             
-            {query ? newRecipes.map(r => <RecipesItems {...r}/>) : recipes.map(r => <RecipesItems {...r}/>)}
+            {recipes.map(r => <RecipesItems {...r}/>)}
             <Link to="/">
                 <button>Home</button>
             </Link>
